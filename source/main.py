@@ -2,6 +2,7 @@ print("hello world")
 
 import pyrebase
 import requests
+import json
 
 config = {
   "apiKey": "AIzaSyCfMEZut1bOgu9d1NHrJiZ7ruRdzfKEHbk",
@@ -33,5 +34,11 @@ print("url: " + r.url)
 print('\n')
 print("Text: " + r.text)
 print(r.json())
+
+d = json.loads(r.text)
+print(d)
+
+print(d['-MXu6cnWThBu4GkgnBnA']['color'])
+
 
 
