@@ -1,8 +1,15 @@
+# from source.datatypes import Currency
+
 print("hello world")
 
 import pyrebase
 import requests
 import json
+from pprint import pprint
+import desert
+from datatypes import Group
+
+import user_auth_config
 
 config = {
   "apiKey": "AIzaSyCfMEZut1bOgu9d1NHrJiZ7ruRdzfKEHbk",
@@ -14,7 +21,8 @@ config = {
 firebase = pyrebase.initialize_app(config)
 
 auth = firebase.auth()
-user = auth.create_user_with_email_and_password("email@gmail.com", "password")
+# user = auth.create_user_with_email_and_password("email@gmail.com", "password")
+user = auth.sign_in_with_email_and_password(user_auth_config.email, user_auth_config.password)
 
 
 print(user)
@@ -64,10 +72,11 @@ print("\n Group details")
 payload = {'auth': user['idToken']}
 r = requests.get('https://settle-up-sandbox.firebaseio.com/groups/' + str(group_id_list[0] + '.json'), params=payload)
 group_json = json.loads(r.text)
-for key, value in group_json.items():
-  print(key)
-  print("\t" + str(value))
-print("\n")
+# for key, value in group_json.items():
+#   print(key)
+#   print("\t" + str(value))
+# print("\n")
+pprint(group_json)
 
 
 # List of Members
@@ -76,11 +85,12 @@ print("\n List of Members")
 payload = {'auth': user['idToken']}
 r = requests.get('https://settle-up-sandbox.firebaseio.com/members/' + str(group_id_list[0] + '.json'), params=payload)
 members_json = json.loads(r.text)
-for key, value in members_json.items():
-  print("Member id: " + key)
-  for key2, value2 in value.items():
-    print("\t" + key2 + " : " + str(value2))
-print("\n")
+# for key, value in members_json.items():
+#   print("Member id: " + key)
+#   for key2, value2 in value.items():
+#     print("\t" + key2 + " : " + str(value2))
+# print("\n")
+pprint(members_json)
 
 # Transactions
 # https://<environment>.firebaseio.com/transactions/<group_id>.json
@@ -88,9 +98,25 @@ print("\n List of Transactions")
 payload = {'auth': user['idToken']}
 r = requests.get('https://settle-up-sandbox.firebaseio.com/transactions/' + str(group_id_list[0] + '.json'), params=payload)
 transactions_json = json.loads(r.text)
-for key, value in transactions_json.items():
-  print("Transaction id: " + key)
-  for key2, value2 in value.items():
-    print("\t" + key2 + " : " + str(value2))
-# print(transactions_json)
-print("\n")
+# for key, value in transactions_json.items():
+#   print("Transaction id: " + key)
+#   for key2, value2 in value.items():
+#     print("\t" + key2 + " : " + str(value2))
+# # print(transactions_json)
+# print("\n")
+pprint(transactions_json)
+
+
+
+# # Load some simple data types.
+# data = {'passengers': [{'name': 'Alice', 'age': 21}, {'name': 'Bob', 'age': 22}]}
+
+
+# Create a schema for the Group class.
+schema = desert.schema(Group)
+
+# Load the data.
+group = schema.load(group_json)
+# assert car == Car(passengers=[Person(name='Alice', age=21), Person(name='Bob', age=22)])
+
+print(group)
