@@ -1,4 +1,3 @@
-import desert
 from group import Group, UserGroupView
 import pyrebase
 import requests
@@ -35,11 +34,7 @@ class SettleUp:
                          params=self.payload)
         usergroup_json = json.loads(r.text)
 
-        # # Create a schema for the Group class.
-        # usergroup_schema = desert.schema(UserGroupView)
-        # # Load the data.
-        # user_groups = usergroup_schema.load(usergroup_json)
-
+        # TODO: Move json to class conversion to dataclass method
         user_groups = []
         for group_id, group in usergroup_json.items():
             user_group_view = UserGroupView(group_id, group['order'], group['color'], group['member'])
@@ -53,12 +48,7 @@ class SettleUp:
                              params=self.payload)
             group_json = json.loads(r.text)
 
-            # # Create a schema for the Group class.
-            # group_schema = desert.schema(Group)
-            # # Load the data.
-            # group = group_schema.load(group_json)
-
-            # for group in group_json:
+            # TODO: Move json to class conversion to dataclass method
             group = group_json
             group = Group(
                 converted_to_currency=group['ownerColor'],
