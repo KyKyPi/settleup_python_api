@@ -4,9 +4,10 @@ import pyrebase
 import requests
 import json
 import user_auth_config
+from typing import List
 
 
-class Settleup:
+class SettleUp:
 
     def __init__(self):
         config = {
@@ -19,22 +20,20 @@ class Settleup:
         firebase = pyrebase.initialize_app(config)
 
         auth = firebase.auth()
-        # user = auth.create_user_with_email_and_password("email@gmail.com", "password")
         self.user = auth.sign_in_with_email_and_password(user_auth_config.email, user_auth_config.password)
 
-        # before the 1 hour expiry:
+        # TODO: Implement refresh token. Tokens expire after 1 hour
         self.user = auth.refresh(self.user['refreshToken'])
         # now we have a fresh token
         self.user['idToken']
 
         self.payload = {'auth': self.user['idToken']}
 
-    def get_groups(self):
+    def get_groups(self) -> List[Group]:
         # usergroup_json = api.request("userGroups")
         r = requests.get('https://settle-up-sandbox.firebaseio.com/userGroups/' + str(self.user['userId'] + '.json'),
                          params=self.payload)
         usergroup_json = json.loads(r.text)
-        print("usergroup_json: " + str(usergroup_json))
 
         # # Create a schema for the Group class.
         # usergroup_schema = desert.schema(UserGroupView)
@@ -43,7 +42,6 @@ class Settleup:
 
         user_groups = []
         for group_id, group in usergroup_json.items():
-            print(group)
             user_group_view = UserGroupView(group_id, group['order'], group['color'], group['member'])
             user_groups.append(user_group_view)
 
@@ -62,7 +60,6 @@ class Settleup:
 
             # for group in group_json:
             group = group_json
-            print(group)
             group = Group(
                 converted_to_currency=group['ownerColor'],
                 invite_link=group['inviteLink'],
@@ -80,7 +77,7 @@ class Settleup:
             groups.append(group)
         return groups
 
-settleup = Settleup()
+settleup = SettleUp()
 groups = settleup.get_groups()
 for group in groups:
     print(group)
