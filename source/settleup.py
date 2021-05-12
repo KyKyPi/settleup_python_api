@@ -25,23 +25,17 @@ class SettleUp:
         self.user['idToken']
 
         self.payload = {'auth': self.user['idToken']}
-        # self.config.firebase_url = "https://settle-up-sandbox.firebaseio.com"
         self.firebase_url = config.databaseURL
 
-    def request(self, data_request) -> dict:
-        user_id = self.user['userId']
+    def request(self, data_request, id) -> dict:
         payload = self.payload
         firebase_url = self.config.databaseURL
-        r = requests.get(f'{firebase_url}/{data_request}/{user_id}.json',
+        r = requests.get(f'{firebase_url}/{data_request}/{id}.json',
                          params=payload)
         return json.loads(r.text)
 
     def get_groups(self) -> List[Group]:
-        # usergroup_json = api.request("userGroups")
-        user_id = self.user['userId']
-        r = requests.get(f'https://settle-up-sandbox.firebaseio.com/userGroups/{user_id}.json',
-                         params=self.payload)
-        usergroup_json = json.loads(r.text)
+        usergroup_json = self.request('userGroups', self.user['userId'])
 
         user_groups = []
         for group_id, usergroup_json in usergroup_json.items():
@@ -50,15 +44,7 @@ class SettleUp:
 
         groups = []
         for user_group in user_groups:
-            # group_json = api.request("group", group_id=user_group.group_id)
-
-            r = requests.get('https://settle-up-sandbox.firebaseio.com/groups/' + str(user_group.group_id + '.json'),
-                             params=self.payload)
-            # f"Hello, {name}. You are {age}."
-            # convert to fstring
-            r = requests.get(f'https://settle-up-sandbox.firebaseio.com/groups/{user_group.group_id}.json',
-                             params=self.payload)
-            group_json = json.loads(r.text)
+            group_json = self.request('groups', user_group.group_id)
 
             group = Group.json_to_class(user_group, group_json)
             groups.append(group)
