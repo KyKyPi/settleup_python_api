@@ -6,6 +6,11 @@ authors = ["kykpi <kylee.burgess.14@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+google-auth = "^1.28.0"
+requests = "^2.11.1"
+Pyrebase = "^3.0.27"
+desert = "^2020.11.18"
+marshmallow-enum = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 
