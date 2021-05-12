@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Group:
+    """dataclass for group request data"""
     converted_to_currency: str
     invite_link: str
     invite_link_active: bool
@@ -20,6 +21,10 @@ class Group:
 
     @classmethod
     def json_to_class(cls, user_group, group_json) -> Group:
+        """classmethod to convert json dict information to a class instance
+        :param user_group: dict of group information from a userGroups request
+        :param group_json: dict of group json data
+        """
         group = cls(
             converted_to_currency=group_json['ownerColor'],
             invite_link=group_json['inviteLink'],
@@ -39,6 +44,7 @@ class Group:
 
 @dataclass
 class UserGroupView:
+    """dataclass for userGroups request data"""
     group_id: str
     order: int
     color: str
@@ -46,6 +52,10 @@ class UserGroupView:
 
     @classmethod
     def from_dict(cls, group_id, group_view_dict) -> UserGroupView:
+        """classmethod to convert json dict information to a class instance
+        :param group_id: group id
+        :param group_view_dict: dict of group json data
+        """
         return cls(
             group_id=group_id,
             order=group_view_dict['order'],

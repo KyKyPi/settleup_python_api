@@ -10,14 +10,25 @@ from user import Config
 
 
 class SettleUp:
+    """The main class for the python SettleUp API"""
 
     def __init__(self, config: Config):
+        """Initialize the SettleUp instance with necessary auth config
+        :param config: instance of Config class containing database auth config
+        parameters
+        """
         self.config = config
+        """instance of Config class containing database auth config
+        parameters"""
 
         firebase = pyrebase.initialize_app(asdict(self.config))
 
         auth = firebase.auth()
-        self.user = auth.sign_in_with_email_and_password(user_auth_config.email, user_auth_config.password)
+        self.user = auth.sign_in_with_email_and_password(
+            user_auth_config.email,
+            user_auth_config.password
+        )
+        """firebase user determined from email/password"""
 
         # TODO: Implement refresh token. Tokens expire after 1 hour
         self.user = auth.refresh(self.user['refreshToken'])
@@ -25,9 +36,16 @@ class SettleUp:
         self.user['idToken']
 
         self.payload = {'auth': self.user['idToken']}
+        """user id token parameter to be passed to database for auth"""
         self.firebase_url = config.databaseURL
+        """database url"""
 
     def request(self, data_request, id) -> dict:
+        """method to request data from the database, returns a json dict
+        :param data_request: string of request type (ex. userGroups or groups)
+        :param id: the required id to perform the request
+        (ex. user_id or group_id)
+        """
         payload = self.payload
         firebase_url = self.config.databaseURL
         r = requests.get(f'{firebase_url}/{data_request}/{id}.json',
@@ -35,6 +53,8 @@ class SettleUp:
         return json.loads(r.text)
 
     def get_groups(self) -> List[Group]:
+        """method to request all groups for a specific user,
+        returns a list of Group instances"""
         usergroup_json = self.request('userGroups', self.user['userId'])
 
         user_groups = []
